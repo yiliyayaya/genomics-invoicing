@@ -5,14 +5,14 @@ source("src/server/summary.R")
 source("src/server/outputs.R")
 
 process_data <- function(input, output, session, file_path, 
-                         raw_data, processed_data, quote_data) {
+                         processed_data, quote_data) {
   # Data upload
-  observeEvent(input$file, verify_upload(input, file_path, raw_data$price_list, 
-                                         processed_data$price_list, quote_data$selected_items))
+  observeEvent(input$file, verify_upload(input, file_path, processed_data$price_list, 
+                                         quote_data$selected_items))
   
   # Process uploaded data
   observeEvent(input$upload_button, 
-               convert_spreadsheet_to_df(file_path(), raw_data$price_list, processed_data$price_list))
+               read_spreadsheet_data(file_path(), processed_data))
 }
 
 main_server_logic <- function(input, output, session, file_path,

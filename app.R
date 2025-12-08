@@ -20,9 +20,7 @@ server <- function(input, output, session) {
   current_page <- reactiveVal("main")
   file_path <- reactiveVal(NULL)
   
-  # Lists to store data from master spreadsheet
-  raw_data <- list()
-  raw_data$price_list <- reactiveVal(NULL)
+  # List to store data from master spreadsheet
   processed_data <- list()
   processed_data$price_list <- reactiveVal(NULL)
   
@@ -32,7 +30,7 @@ server <- function(input, output, session) {
   
   # App Logic
   # Function that converts raw_master_spreadsheet to processed_master_spreadsheet
-  process_data(input, output, session, file_path, raw_data, 
+  process_data(input, output, session, file_path, 
                processed_data, quote_data)
   
   # Function containing backend/server logic
