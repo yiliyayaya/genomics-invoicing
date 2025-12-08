@@ -5,46 +5,46 @@ source("src/server/summary.R")
 source("src/server/outputs.R")
 
 process_data <- function(input, output, session, file_path, 
-                         raw_data, processed_data, invoice_items_data) {
+                         raw_data, processed_data, quote_data) {
   # Data upload
-  observeEvent(input$file, verify_upload(input, file_path, raw_data, 
-                                         processed_data, invoice_items_data))
+  observeEvent(input$file, verify_upload(input, file_path, raw_data$price_list, 
+                                         processed_data$price_list, quote_data$selected_items))
   
   # Process uploaded data
   observeEvent(input$upload_button, 
-               convert_spreadsheet_to_df(file_path(), raw_data, processed_data))
+               convert_spreadsheet_to_df(file_path(), raw_data$price_list, processed_data$price_list))
 }
 
 main_server_logic <- function(input, output, session, file_path,
-                          processed_data, invoice_items_data, current_page) {
+                          processed_data, quote_data, current_page) {
   edited_invoice_table <- reactiveVal(NULL)
   
   # Populate Brand/Product filters list
-  observeEvent(processed_data(), populate_brand_product_filters(processed_data, session))
+  observeEvent(processed_data$price_list(), populate_brand_product_filters(processed_data$price_list, session))
   
   # Filter data
-  filtered_data <- reactive(filter_data(input, processed_data))
+  filtered_data <- reactive(filter_data(input, processed_data$price_list))
   
   # Generate master summary
-  master_summary <- reactive(generate_master_summary_df(processed_data))
+  master_summary <- reactive(generate_master_summary_df(processed_data$price_list))
   output$master_summary_table <- renderTable({
     req(master_summary())
     master_summary()
   })
   
   # Generate extra info
-  output$extra_info_table <- renderTable(generate_extra_info_table(processed_data))
+  output$extra_info_table <- renderTable(generate_extra_info_table(processed_data$price_list))
   
   # Generate main table
   output$data_table <- DT::renderDataTable(generate_main_table(filtered_data))
   
   # Select rows on main table
   observeEvent(input$data_table_rows_selected, 
-               invoice_items_data(select_rows(input, output, session, filtered_data)))
+               quote_data$selected_items(select_rows(input, output, session, filtered_data)))
   
   # Verify items selected before switching to invoice page
   observeEvent(input$create_invoice_page,{
-    if (is.null(invoice_items_data()) || nrow(invoice_items_data()) == 0) {
+    if (is.null(quote_data$selected_items()) || nrow(quote_data$selected_items()) == 0) {
       showNotification("Select one or more rows in the table first.", type = "warning")
       return()
     }
@@ -57,7 +57,7 @@ main_server_logic <- function(input, output, session, file_path,
   
   # Generate invoice table after cleaning
   invoice_table <- reactive({
-    new_table <- clean_invoice_data(invoice_items_data)
+    new_table <- clean_invoice_data(quote_data$selected_items)
     if(verify_empty_df(new_table) || is.null(new_table)) {
       return(new_table)
     } else {
