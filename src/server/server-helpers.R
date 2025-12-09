@@ -40,6 +40,20 @@ verify_empty_df <- function(compare_df) {
                                           Quantity=numeric(0), Amount=numeric(0), Total=numeric(0))))
 }
 
+calculate_new_price_list <- function(price_list_df, surcharges_df) {
+  req(price_list_df, surcharges_df)
+  for(i in 1:nrow(surcharges_df)) {
+    # Get each surcharge name and amount
+    column_name <- paste(surcharges_df$`Surcharge Label`[i], "cost")
+    surcharge_amount <- surcharges_df$`Surcharge Amount`[i]
+    
+    #Generate corresponding column
+    price_list_df[[column_name]] <- price_list_df$`Per Reaction Cost ($)` * surcharge_amount
+  }
+  
+  return(price_list_df)
+}
+
 clean_invoice_data <- function(invoice_items_data) {
   # 1st filter, check null or non-empty
   dat <- invoice_items_data()

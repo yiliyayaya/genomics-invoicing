@@ -12,7 +12,7 @@ process_data <- function(input, output, session, file_path,
   
   # Process uploaded data
   observeEvent(input$upload_button, 
-               read_spreadsheet_data(file_path(), processed_data))
+               read_process_spreadsheet_data(file_path(), processed_data))
 }
 
 main_server_logic <- function(input, output, session, file_path,

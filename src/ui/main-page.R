@@ -42,13 +42,16 @@ generate_extra_info_table <- function(processed_data) {
 generate_main_table <- function(filtered_data) {
   req(filtered_data())
   df <- filtered_data()
-  desired <- c("Product Code", "Brand", "Product Category", "Product Name",
-               "per reaction cost", "%PRJ surcharge", "%EXTERNAL surcharge",
-               "Additional reagent Cost (not incl. in kit)")
-  keep <- intersect(desired, names(df))
-  validate(need(length(keep) > 0, "None of the expected columns were found. Check your master’s headers."))
+  # desired <- c("Product Code", "Brand", "Item Category", "Item", "Description",
+  #              "Per Reaction Cost", "Additional reagent Cost (not incl. in kit)",
+  #              "Constant cost", "Item specific discount")
+  # keep <- intersect(desired, names(df))
+  drop <- c("Constant Cost", "Item Specific Discount", "Description")
+  keep_data <- df[, !names(df) %in% drop]
+  validate(need(length(keep_data) > 0, "None of the expected columns were found. Check your master’s headers."))
   datatable(
-    df[, keep, drop = FALSE],
+    # df[, keep, drop = FALSE],
+    keep_data,
     rownames = FALSE,
     options = list(ordering = FALSE, language = list(search = "Search Item:")),
     selection = "multiple"

@@ -10,8 +10,7 @@ parse_price_list <- function(df) {
   df
 }
 
-#rv stands for reactiveVal
-read_spreadsheet_data <- function(filepath, processed_data) {
+read_process_spreadsheet_data <- function(filepath, processed_data) {
   if (!is.null(filepath)) {
     if(str_sub(filepath, -5, -1) != ".xlsx") {
       showNotification("Please upload a .xlsx file to continue.", type="warning")
@@ -27,19 +26,20 @@ read_spreadsheet_data <- function(filepath, processed_data) {
     processed_data$processing_charges(process_charge_df)
     
     # Read surcharges data
+    
     # Sort by surcharge type then assign accordingly
     surcharges_df <- read_excel(filepath, sheet=3)
     price_list_surcharge_data <- (surcharges_df %>% 
                               filter(surcharges_df$"Surcharge Type" == "PRICE_LIST"))
-    price_list_surcharge_data$"Surcharge Type" <- NULL
     processed_data$price_list_surcharges(price_list_surcharge_data)
     
     process_surcharge_data <- (surcharges_df %>% 
                               filter(surcharges_df$"Surcharge Type" == "PROCESSING"))
-    process_surcharge_data$"Surcharge Type" <- NULL
     processed_data$processing_surcharges(process_surcharge_data)
-    print(processed_data$price_list_surcharges)
-    print(processed_data$processing_surcharges)
+    
+    new_price_list <- calculate_new_price_list(processed_data$price_list(), 
+                             processed_data$price_list_surcharges())
+    processed_data$price_list(new_price_list)
   } else {
     showNotification("Please upload a file first.", type = "warning")
   }
