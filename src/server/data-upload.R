@@ -21,14 +21,39 @@ read_spreadsheet_data <- function(filepath, processed_data) {
     # Read price list data
     price_list_df <- read_excel(filepath, sheet=1)
     processed_data$price_list(parse_price_list(price_list_df))
+    
+    # Read processing charges data
+    process_charge_df <- read_excel(filepath, sheet=2)
+    processed_data$processing_charges(process_charge_df)
+    
+    # Read surcharges data
+    # Sort by surcharge type then assign accordingly
+    surcharges_df <- read_excel(filepath, sheet=3)
+    price_list_surcharge_data <- (surcharges_df %>% 
+                              filter(surcharges_df$"Surcharge Type" == "PRICE_LIST"))
+    price_list_surcharge_data$"Surcharge Type" <- NULL
+    processed_data$price_list_surcharges(price_list_surcharge_data)
+    
+    process_surcharge_data <- (surcharges_df %>% 
+                              filter(surcharges_df$"Surcharge Type" == "PROCESSING"))
+    process_surcharge_data$"Surcharge Type" <- NULL
+    processed_data$processing_surcharges(process_surcharge_data)
+    print(processed_data$price_list_surcharges)
+    print(processed_data$processing_surcharges)
   } else {
     showNotification("Please upload a file first.", type = "warning")
   }
 }
 
-verify_upload <- function(input, file_path_rv, processed_data_rv, invoice_items_data_rv) {
+verify_upload <- function(input, file_path_rv, processed_data, quote_data) {
   req(input$file)
   file_path_rv(input$file$datapath)
-  processed_data_rv(NULL)
-  invoice_items_data_rv(NULL)
+  
+  processed_data$price_list(NULL)
+  processed_data$processing_charges(NULL)
+  processed_data$price_list_surcharges(NULL)
+  processed_data$processing_surcharges(NULL)
+  
+  quote_data$selected_items(NULL)
+  quote_data$selected_processing(NULL)
 }

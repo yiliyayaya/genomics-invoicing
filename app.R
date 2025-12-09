@@ -23,10 +23,14 @@ server <- function(input, output, session) {
   # List to store data from master spreadsheet
   processed_data <- list()
   processed_data$price_list <- reactiveVal(NULL)
+  processed_data$processing_charges <- reactiveVal(NULL)
+  processed_data$price_list_surcharges <- reactiveVal(NULL)
+  processed_data$processing_surcharges <- reactiveVal(NULL)
   
   # List to store data collected/selected for quote
   quote_data <- list()
   quote_data$selected_items <- reactiveVal(NULL)
+  quote_data$selected_processing <- reactiveVal(NULL)
   
   # App Logic
   # Function that converts raw_master_spreadsheet to processed_master_spreadsheet

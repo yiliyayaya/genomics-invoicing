@@ -7,8 +7,8 @@ source("src/server/outputs.R")
 process_data <- function(input, output, session, file_path, 
                          processed_data, quote_data) {
   # Data upload
-  observeEvent(input$file, verify_upload(input, file_path, processed_data$price_list, 
-                                         quote_data$selected_items))
+  observeEvent(input$file, verify_upload(input, file_path, processed_data, 
+                                         quote_data))
   
   # Process uploaded data
   observeEvent(input$upload_button, 
