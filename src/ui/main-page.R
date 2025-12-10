@@ -58,14 +58,22 @@ generate_extra_info_table <- function(surcharge_table) {
 generate_main_table <- function(filtered_data) {
   req(filtered_data())
   df <- filtered_data()
+  
+  # Drop unnecessary columns
   drop <- c("Constant Cost", "Item Specific Discount", "Description")
   keep_data <- df[, !names(df) %in% drop]
+  
   validate(need(length(keep_data) > 0, "None of the expected columns were found. Check your master’s headers."))
-  datatable(
-    # df[, keep, drop = FALSE],
+  
+  # Move additional cost to last column for readability
+  if("Additional reagent Cost (not incl. in kit)" %in% names(keep_data)) {
+    keep_data <- keep_data %>% relocate(`Additional reagent Cost (not incl. in kit)`, .after = last_col())
+  }
+    
+  return(datatable(
     keep_data,
     rownames = FALSE,
     options = list(ordering = FALSE, language = list(search = "Search Item:")),
     selection = "multiple"
-  )
+  ))
 }
