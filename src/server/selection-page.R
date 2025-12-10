@@ -99,11 +99,10 @@ generateInvoiceTable <- function(invoice_items_data) {
   items$Quantity <- 1
   
   
-  items$Amount <- as.numeric(items$`Per Reaction Cost`)
+  items$Amount <- as.numeric(items$`Per Reaction Cost ($)`)
   items$Total <- items$Quantity * items$Amount
   
-  print(names(items))
-  formatted <- items[, c("Product Name", "Description", "Quantity", "Amount", "Total")]
+  formatted <- items[, c("Item", "Description", "Quantity", "Amount", "Total")]
   colnames(formatted) <- c("Item", "Description", "Quantity", "Amount", "Total")
   
   return(formatted)
