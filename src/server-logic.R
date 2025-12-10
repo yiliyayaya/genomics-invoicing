@@ -33,7 +33,7 @@ main_server_logic <- function(input, output, session, file_path,
   })
   
   # Generate extra info
-  output$extra_info_table <- renderTable(generate_extra_info_table(processed_data$price_list))
+  output$extra_info_table <- renderTable(generate_extra_info_table(processed_data$price_list_surcharges))
   
   # Generate main table
   output$data_table <- DT::renderDataTable(generate_main_table(filtered_data))
