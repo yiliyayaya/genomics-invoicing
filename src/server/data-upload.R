@@ -3,13 +3,23 @@ library(stringr)
 source("src/server/server-helpers.R")
 
 parse_price_list <- function(df) {
+  df_names <- names(df)
+  
+  df <- df %>% drop_na("Item") 
+    
+  # Fill empty values
+  per_reaction_col <- "Per Reaction Cost ($)"
+  if (per_reaction_col %in% df_names) {
+    df[[per_reaction_col]][is.na(df[[per_reaction_col]])] <- 0
+  }
+  
   add_cost_col <- "Additional reagent Cost (not incl. in kit)"
-  if (add_cost_col %in% names(df)) {
+  if (add_cost_col %in% df_names) {
     df[[add_cost_col]][is.na(df[[add_cost_col]])] <- 0
   }
   
   const_cost_col <- "Constant Cost"
-  if (const_cost_col %in% names(df)) {
+  if (const_cost_col %in% df_names) {
     df[[const_cost_col]][is.na(df[[const_cost_col]])] <- FALSE
   }
   return(df)
