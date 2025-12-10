@@ -20,7 +20,7 @@ main_server_logic <- function(input, output, session, file_path,
   edited_invoice_table <- reactiveVal(NULL)
   
   # Populate Brand/Product filters list
-  observeEvent(processed_data$price_list(), populate_brand_product_filters(processed_data$price_list, session))
+  observeEvent(processed_data$price_list(), populate_selection_page_filters(processed_data$price_list, session))
   
   # Filter data
   filtered_data <- reactive(filter_data(input, processed_data$price_list))

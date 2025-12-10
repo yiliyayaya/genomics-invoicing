@@ -10,6 +10,8 @@ render_main_page <- function() {
                        options = list(placeholder = "All brands")),
         selectizeInput("item_filter", "Item", choices = NULL, multiple = TRUE,
                        options = list(placeholder = "All items")),
+        selectizeInput("category_filter", "Category", choices = NULL, multiple = TRUE,
+                       options = list(placeholder = "All categories")),
         br(),
         actionButton("create_invoice_page", "Create Invoice", class = "invoice-button"),
         tags$hr(),
