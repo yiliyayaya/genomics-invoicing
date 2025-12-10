@@ -30,8 +30,8 @@ filter_data <- function(input, processed_data){
   if (!is.null(input$brand_filter) && length(input$brand_filter) > 0) {
     df <- df[df$Brand %in% input$brand_filter, , drop = FALSE]
   }
-  if (!is.null(input$product_filter) && length(input$product_filter) > 0) {
-    df <- df[df$`Product Name` %in% input$product_filter, , drop = FALSE]
+  if (!is.null(input$item_filter) && length(input$item_filter) > 0) {
+    df <- df[df$`Item` %in% input$item_filter, , drop = FALSE]
   }
   return(df)
 }
@@ -43,9 +43,9 @@ populate_brand_product_filters <- function(processed_data, session) {
     updateSelectizeInput(session, "brand_filter",
                          choices = sort(unique(df$Brand)), server = TRUE)
   }
-  if ("Product Name" %in% names(df)) {
-    updateSelectizeInput(session, "product_filter",
-                         choices = sort(unique(df$`Product Name`)), server = TRUE)
+  if ("Item" %in% names(df)) {
+    updateSelectizeInput(session, "item_filter",
+                         choices = sort(unique(df$`Item`)), server = TRUE)
   }
 }
 
