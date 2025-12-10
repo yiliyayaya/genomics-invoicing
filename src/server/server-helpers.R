@@ -48,7 +48,12 @@ calculate_new_price_list <- function(price_list_df, surcharges_df) {
     surcharge_amount <- surcharges_df$`Surcharge Amount`[i]
     
     #Generate corresponding column
-    price_list_df[[column_name]] <- price_list_df$`Per Reaction Cost ($)` * surcharge_amount
+    # Use if statement for constant or surcharge cost
+    price_list_df[[column_name]] <- ifelse(
+      price_list_df$`Constant Cost`,
+      price_list_df$`Per Reaction Cost ($)`,
+      round(price_list_df$`Per Reaction Cost ($)` * surcharge_amount, digits=-1)
+    )
   }
   
   return(price_list_df)

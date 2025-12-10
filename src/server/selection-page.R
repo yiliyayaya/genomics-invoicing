@@ -33,7 +33,7 @@ filter_data <- function(input, processed_data){
   if (!is.null(input$product_filter) && length(input$product_filter) > 0) {
     df <- df[df$`Product Name` %in% input$product_filter, , drop = FALSE]
   }
-  df
+  return(df)
 }
 
 populate_brand_product_filters <- function(processed_data, session) {

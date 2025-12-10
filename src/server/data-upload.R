@@ -3,11 +3,16 @@ library(stringr)
 source("src/server/server-helpers.R")
 
 parse_price_list <- function(df) {
-  target_col <- "Additional reagent Cost (not incl. in kit)"
-  if (target_col %in% names(df)) {
-    df[[target_col]][is.na(df[[target_col]])] <- 0
+  add_cost_col <- "Additional reagent Cost (not incl. in kit)"
+  if (add_cost_col %in% names(df)) {
+    df[[add_cost_col]][is.na(df[[add_cost_col]])] <- 0
   }
-  df
+  
+  const_cost_col <- "Constant Cost"
+  if (const_cost_col %in% names(df)) {
+    df[[const_cost_col]][is.na(df[[const_cost_col]])] <- FALSE
+  }
+  return(df)
 }
 
 read_process_spreadsheet_data <- function(filepath, processed_data) {
@@ -26,7 +31,6 @@ read_process_spreadsheet_data <- function(filepath, processed_data) {
     processed_data$processing_charges(process_charge_df)
     
     # Read surcharges data
-    
     # Sort by surcharge type then assign accordingly
     surcharges_df <- read_excel(filepath, sheet=3)
     price_list_surcharge_data <- (surcharges_df %>% 
