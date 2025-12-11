@@ -26,6 +26,7 @@ server <- function(input, output, session) {
   processed_data$processing_charges <- reactiveVal(NULL)
   processed_data$price_list_surcharges <- reactiveVal(NULL)
   processed_data$processing_surcharges <- reactiveVal(NULL)
+  processed_data$brand_discounts <- reactiveVal(NULL)
   
   # List to store data collected/selected for quote
   quote_data <- list()

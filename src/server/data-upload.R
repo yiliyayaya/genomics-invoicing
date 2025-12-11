@@ -54,6 +54,11 @@ read_process_spreadsheet_data <- function(filepath, processed_data) {
     new_price_list <- calculate_new_price_list(processed_data$price_list(), 
                              processed_data$price_list_surcharges())
     processed_data$price_list(new_price_list)
+    
+    # Read discounts data
+    discounts_df <- read_excel(filepath, sheet=4)
+    processed_data$brand_discounts(discounts_df)
+    
   } else {
     showNotification("Please upload a file first.", type = "warning")
   }
@@ -67,6 +72,7 @@ verify_upload <- function(input, file_path_rv, processed_data, quote_data) {
   processed_data$processing_charges(NULL)
   processed_data$price_list_surcharges(NULL)
   processed_data$processing_surcharges(NULL)
+  processed_data$brand_discounts(NULL)
   
   quote_data$selected_items(NULL)
   quote_data$selected_processing(NULL)
