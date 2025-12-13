@@ -8,12 +8,9 @@ to_num <- function(x) {
 }
 
 clean_invoice_cols <- function(df) {
-  need <- c("per reaction cost", "%PRJ surcharge", "%EXTERNAL surcharge",
-            "Additional reagent Cost (not incl. in kit)")
+  need <- c("Per Reaction Cost ($)", "Additional reagent Cost (not incl. in kit)")
   for (nm in need) if (!nm %in% names(df)) df[[nm]] <- 0
-  df[["per reaction cost"]] <- to_num(df[["per reaction cost"]])
-  df[["%PRJ surcharge"]] <- to_num(df[["%PRJ surcharge"]])
-  df[["%EXTERNAL surcharge"]] <- to_num(df[["%EXTERNAL surcharge"]])
+  df[["Per Reaction Cost ($)"]] <- to_num(df[["Per Reaction Cost ($)"]])
   df[["Additional reagent Cost (not incl. in kit)"]] <- to_num(df[["Additional reagent Cost (not incl. in kit)"]])
   for (nm in need) df[[nm]][is.na(df[[nm]])] <- 0
   df
@@ -41,6 +38,25 @@ report_params_list <- function(input, pdf_table_data) {
 verify_empty_df <- function(compare_df) {
   return(identical(compare_df, data.frame(Item=character(0), Description=character(0),
                                           Quantity=numeric(0), Amount=numeric(0), Total=numeric(0))))
+}
+
+calculate_new_price_list <- function(price_list_df, surcharges_df) {
+  req(price_list_df, surcharges_df)
+  for(i in 1:nrow(surcharges_df)) {
+    # Get each surcharge name and amount
+    column_name <- paste(surcharges_df$`Surcharge Label`[i], "cost")
+    surcharge_amount <- surcharges_df$`Surcharge Amount`[i]
+    
+    #Generate corresponding column
+    # Use if statement for constant or surcharge cost
+    price_list_df[[column_name]] <- ifelse(
+      price_list_df$`Constant Cost`,
+      price_list_df$`Per Reaction Cost ($)`,
+      round(price_list_df$`Per Reaction Cost ($)` * surcharge_amount, digits=-1)
+    )
+  }
+  
+  return(price_list_df)
 }
 
 clean_invoice_data <- function(invoice_items_data) {

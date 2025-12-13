@@ -23,29 +23,45 @@ guess_type <- function(df) {
   )
 }
 
-# This function is used to filter the data based on the brand or product selected
+# This function is used to filter the data based on the brand, item or category selected
 filter_data <- function(input, processed_data){
   req(processed_data())
   df <- processed_data()
+  
+  # Brand filter
   if (!is.null(input$brand_filter) && length(input$brand_filter) > 0) {
     df <- df[df$Brand %in% input$brand_filter, , drop = FALSE]
   }
-  if (!is.null(input$product_filter) && length(input$product_filter) > 0) {
-    df <- df[df$`Product Name` %in% input$product_filter, , drop = FALSE]
+  
+  # Item Filter
+  if (!is.null(input$item_filter) && length(input$item_filter) > 0) {
+    df <- df[df$`Item` %in% input$item_filter, , drop = FALSE]
   }
-  df
+  
+  # Category filter
+  if (!is.null(input$category_filter) && length(input$category_filter) > 0) {
+    df <- df[df$`Item Category` %in% input$category_filter, , drop = FALSE]
+  }
+  return(df)
 }
 
-populate_brand_product_filters <- function(processed_data, session) {
+populate_selection_page_filters <- function(processed_data, session) {
   df <- processed_data()
   if (is.null(df)) return()
+  
   if ("Brand" %in% names(df)) {
     updateSelectizeInput(session, "brand_filter",
                          choices = sort(unique(df$Brand)), server = TRUE)
   }
-  if ("Product Name" %in% names(df)) {
-    updateSelectizeInput(session, "product_filter",
-                         choices = sort(unique(df$`Product Name`)), server = TRUE)
+  
+  if ("Item" %in% names(df)) {
+    updateSelectizeInput(session, "item_filter",
+                         choices = sort(unique(df$`Item`)), server = TRUE)
+  }
+  
+  if ("Item Category" %in% names(df)) {
+    updateSelectizeInput(session, "category_filter",
+                         choices = sort(unique(df$`Item Category`, server = TRUE)))
   }
 }
 
@@ -83,11 +99,10 @@ generateInvoiceTable <- function(invoice_items_data) {
   items$Quantity <- 1
   
   
-  items$Amount <- as.numeric(items$`%PRJ surcharge`)
+  items$Amount <- as.numeric(items$`Per Reaction Cost ($)`)
   items$Total <- items$Quantity * items$Amount
-  items$Description <- paste(items$Brand, items$`Product Category`, sep = " - ")
   
-  formatted <- items[, c("Product Name", "Description", "Quantity", "Amount", "Total")]
+  formatted <- items[, c("Item", "Description", "Quantity", "Amount", "Total")]
   colnames(formatted) <- c("Item", "Description", "Quantity", "Amount", "Total")
   
   return(formatted)
