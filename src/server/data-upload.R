@@ -38,7 +38,6 @@ read_process_spreadsheet_data <- function(filepath, processed_data) {
     
     # Read processing charges data
     process_charge_df <- read_excel(filepath, sheet=2)
-    processed_data$processing_charges(process_charge_df)
     
     # Read surcharges data
     # Sort by surcharge type then assign accordingly
@@ -54,6 +53,10 @@ read_process_spreadsheet_data <- function(filepath, processed_data) {
     new_price_list <- calculate_new_price_list(processed_data$price_list(), 
                              processed_data$price_list_surcharges())
     processed_data$price_list(new_price_list)
+    
+    new_processing_charges <- calculate_new_processing_charges_df(process_charge_df,
+                                                                  processed_data$processing_surcharges())
+    processed_data$processing_charges(new_processing_charges)
     
     # Read discounts data
     discounts_df <- read_excel(filepath, sheet=4)

@@ -13,22 +13,22 @@ render_main_page <- function() {
         selectizeInput("category_filter", "Category", choices = NULL, multiple = TRUE,
                        options = list(placeholder = "All categories")),
         br(),
-        actionButton("create_invoice_page", "Create Invoice", class = "invoice-button"),
+        actionButton("to_processing_charges_page", "Next page"),
         tags$hr(),
         h4("Master spreadsheet summary"),
         tableOutput("master_summary_table"),
         br(),
         h4("Surcharges Table"),
-        tableOutput("extra_info_table")
+        tableOutput("price_list_surcharges_table")
       ),
       mainPanel(
-        DT::dataTableOutput("data_table")
+        DT::dataTableOutput("price_list_main_table")
       )
     )
   )
 }
 
-generate_extra_info_table <- function(surcharge_table) {
+generate_surcharge_reference <- function(surcharge_table) {
     req(surcharge_table())
     df <- surcharge_table()
     

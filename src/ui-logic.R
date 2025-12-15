@@ -1,5 +1,6 @@
 source("src/ui/main-page.R")
 source("src/ui/quote-page.R")
+source("src/ui/processing-charges-page.R")
 
 main_ui_logic <- function(input, output, session, current_page) {
   # Render UI
@@ -7,7 +8,9 @@ main_ui_logic <- function(input, output, session, current_page) {
   output$main_ui <- renderUI({
     if (current_page() == "main") {
       render_main_page()
-    } else if (current_page() == "invoice_generated") {
+    } else if (current_page() == "processing_charges") {
+      render_processing_charges_page()
+    }else if (current_page() == "invoice_generated") {
       render_quote_page()
     }
   })

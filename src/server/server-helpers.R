@@ -40,6 +40,7 @@ verify_empty_df <- function(compare_df) {
                                           Quantity=numeric(0), Amount=numeric(0), Total=numeric(0))))
 }
 
+# Creates the new df after surcharges have been applied
 calculate_new_price_list <- function(price_list_df, surcharges_df) {
   req(price_list_df, surcharges_df)
   for(i in 1:nrow(surcharges_df)) {
@@ -57,6 +58,21 @@ calculate_new_price_list <- function(price_list_df, surcharges_df) {
   }
   
   return(price_list_df)
+}
+
+calculate_new_processing_charges_df <- function(processing_charges_df, surcharges_df) {
+  req(processing_charges_df, surcharges_df)
+  
+  for(i in 1:nrow(surcharges_df)) {
+    # Get each surcharge name and amount
+    column_name <- surcharges_df$`Surcharge Label`[i]
+    surcharge_amount <- surcharges_df$`Surcharge Amount`[i]
+    
+    # This is only temporary and will change, need to account for compounding surcharge logic
+    processing_charges_df[[column_name]] <- round(processing_charges_df$`Base Price` * surcharge_amount, digits=-1)
+  }
+  
+  return(processing_charges_df)
 }
 
 clean_invoice_data <- function(invoice_items_data) {
