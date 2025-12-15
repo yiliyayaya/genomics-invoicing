@@ -42,8 +42,8 @@ main_server_logic <- function(input, output, session, file_path,
   output$price_list_main_table <- DT::renderDataTable(generate_main_table(filtered_data))
   
   # Select rows on main table
-  observeEvent(input$data_table_rows_selected, 
-               quote_data$selected_items(select_rows(input, output, session, filtered_data)))
+  observeEvent(input$price_list_table_rows_selected, 
+               quote_data$selected_items(select_item_rows(input, output, session, filtered_data)))
   
   observeEvent(input$to_processing_charges_page,{ current_page("processing_charges") })
   
@@ -51,7 +51,7 @@ main_server_logic <- function(input, output, session, file_path,
   
   # Verify items selected before switching to invoice page
   observeEvent(input$create_invoice_page,{
-    if (is.null(quote_data$selected_items()) || nrow(quote_data$selected_items()) == 0) {
+    if (is.null(quote_data$selected_processing()) || nrow(quote_data$selected_processing()) == 0) {
       showNotification("Select one or more rows in the table first.", type = "warning")
       return()
     }
@@ -60,6 +60,9 @@ main_server_logic <- function(input, output, session, file_path,
   })
   
   output$processing_surcharge_table <- renderTable(generate_surcharge_reference(processed_data$processing_surcharges))
+  
+  observeEvent(input$processing_charges_table_rows_selected,
+               quote_data$selected_processing(select_processing_charge_rows(input, output, session, processed_data$processing_surcharges)))
   
   output$processing_charges_table <- DT::renderDataTable(generate_processing_charge_table(processed_data$processing_charges))
   

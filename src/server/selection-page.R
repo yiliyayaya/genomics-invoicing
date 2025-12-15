@@ -65,8 +65,8 @@ populate_selection_page_filters <- function(processed_data, session) {
   }
 }
 
-select_rows <- function(input, output, session, filtered_data) {
-  rows <- input$data_table_rows_selected
+select_item_rows <- function(input, output, session, filtered_data) {
+  rows <- input$price_list_table_rows_selected
   df <- filtered_data()
   if (!is.null(df) && length(rows) > 0) {
     return(df[rows, , drop = FALSE])
