@@ -78,6 +78,11 @@ main_server_logic <- function(input, output, session, file_path,
     output$editable_items_table <- DT::renderDataTable({ items_table })  
     output$editable_processing_charges_table <- DT::renderDataTable({ processing_charges_table })
     
+    updateSelectizeInput(session, "project_type_select", 
+                         choices=unique(processed_data$price_list_surcharges()$`Surcharge Label`))
+    updateSelectizeInput(session, "processing_type_select", 
+                         choices=unique(processed_data$processing_surcharges()$`Surcharge Label`))
+    
     output$download_invoice <- downloadHandler(
       filename = function() { paste0("Invoice_", Sys.Date(), ".pdf") },
       content = function(file) { generate_report(input, file, new_table) }

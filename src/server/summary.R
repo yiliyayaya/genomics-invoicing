@@ -1,6 +1,5 @@
 generate_items_summary_table <- function(selected_items) {
   items_df <- selected_items()
-  print(names(items_df))
   # No null dataframes, at least 1 dataframe must be non-empty
   if (is.null(items_df) || nrow(items_df) == 0) {
     return(data.frame(Item=character(0), Description=character(0),
@@ -12,8 +11,7 @@ generate_items_summary_table <- function(selected_items) {
 }
 
 generate_processing_summary_table <- function(selected_processing_charges) {
-  processing_df <- selected_processing_charges()  
-  print(names(processing_df))
+  processing_df <- selected_processing_charges()
   if (is.null(processing_df)|| nrow(processing_df) == 0) {
     return(data.frame(Item=character(0), Description=character(0),
                       Quantity=numeric(0), Amount=numeric(0), Total=numeric(0)))

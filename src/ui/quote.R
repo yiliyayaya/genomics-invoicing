@@ -24,7 +24,12 @@ quotePage <- function(quote_id, project_id, project_title, project_type, platfor
             br(),
             fluidRow(
               column(2, strong("Project Type:")),
-              column(10, textInput("project_id", NULL, value = project_type, width = "50%"))
+              column(10, selectizeInput("project_type_select", label=NULL, choices=NULL, multiple=FALSE, width="50%"))
+            ),
+            br(),
+            fluidRow(
+              column(2, strong("Processing Type:")),
+              column(10, selectizeInput("processing_type_select", label=NULL, choices=NULL, multiple=FALSE, width="50%"))
             ),
             fluidRow(
               column(2, strong("Platform:")),
