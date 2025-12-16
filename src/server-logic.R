@@ -70,6 +70,21 @@ main_server_logic <- function(input, output, session, file_path,
   # Return to main page
   observeEvent(input$back_to_main, { current_page("main") })
   
+  observeEvent(input$delete_rows_button, {
+    if (!is.null(input$editable_items_table_rows_selected) &&
+        (length(input$editable_items_table_rows_selected) > 0)) {
+      old_quote_data <- quote_data$selected_items()
+      quote_data$selected_items(old_quote_data[-input$editable_items_table_rows_selected, ])
+    }
+       
+    if(!is.null(input$editable_processing_charges_table_rows_selected) &&
+       (length(input$editable_processing_charges_table_rows_selected) > 0)) {
+      old_charges_data <- quote_data$selected_processing()
+      quote_data$selected_processing(old_charges_data[-input$editable_processing_charges_table_rows_selected, ])
+    }
+    
+  })
+  
   observe({
     if(current_page() == "invoice_generated") {
       req(processed_data$price_list_surcharges(), processed_data$processing_surcharges())

@@ -27,11 +27,6 @@ parse_price_list <- function(df) {
 
 read_process_spreadsheet_data <- function(filepath, processed_data) {
   if (!is.null(filepath)) {
-    if(str_sub(filepath, -5, -1) != ".xlsx") {
-      showNotification("Please upload a .xlsx file to continue.", type="warning")
-      return()
-    }
-    
     # Read price list data
     price_list_df <- read_excel(filepath, sheet=1)
     processed_data$price_list(parse_price_list(price_list_df))
