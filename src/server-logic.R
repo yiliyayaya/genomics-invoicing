@@ -19,7 +19,6 @@ main_server_logic <- function(input, output, session, file_path,
                           processed_data, quote_data, current_page) {
   edited_invoice_table <- reactiveVal(NULL)
   
-  
   # PRICE LIST PAGE LOGIC =======================================================================================
   # Populate filters
   observeEvent(processed_data$price_list(), populate_selection_page_filters(processed_data$price_list, session))
@@ -39,7 +38,7 @@ main_server_logic <- function(input, output, session, file_path,
   output$price_list_surcharges_table <- renderTable(generate_surcharge_reference(processed_data$price_list_surcharges))
   
   # Generate main table
-  output$price_list_main_table <- DT::renderDataTable(generate_main_table(filtered_data))
+  output$price_list_table <- DT::renderDataTable(generate_main_table(filtered_data))
   
   # Select rows on main table
   observeEvent(input$price_list_table_rows_selected, 
@@ -62,7 +61,7 @@ main_server_logic <- function(input, output, session, file_path,
   output$processing_surcharge_table <- renderTable(generate_surcharge_reference(processed_data$processing_surcharges))
   
   observeEvent(input$processing_charges_table_rows_selected,
-               quote_data$selected_processing(select_processing_charge_rows(input, output, session, processed_data$processing_surcharges)))
+               quote_data$selected_processing(select_processing_charge_rows(input, output, session, processed_data$processing_charges)))
   
   output$processing_charges_table <- DT::renderDataTable(generate_processing_charge_table(processed_data$processing_charges))
   
@@ -73,12 +72,11 @@ main_server_logic <- function(input, output, session, file_path,
   
   # Generate invoice table after cleaning
   invoice_table <- reactive({
-    new_table <- clean_invoice_data(quote_data$selected_items)
-    if(verify_empty_df(new_table) || is.null(new_table)) {
-      return(new_table)
-    } else {
-      output$editable_invoice_table <- DT::renderDataTable({ new_table })  
-    }
+    items_table <- generate_items_summary_table(quote_data$selected_items)
+    processing_charges_table <- generate_processing_summary_table(quote_data$selected_processing)
+    
+    output$editable_items_table <- DT::renderDataTable({ items_table })  
+    output$editable_processing_charges_table <- DT::renderDataTable({ processing_charges_table })
     
     output$download_invoice <- downloadHandler(
       filename = function() { paste0("Invoice_", Sys.Date(), ".pdf") },

@@ -31,7 +31,9 @@ quotePage <- function(quote_id, project_id, project_title, project_type, platfor
               column(10, textInput("platform", NULL, value = platform, width = "50%"))
             ),
             br(),
-            DT::dataTableOutput("editable_invoice_table"),
+            DT::dataTableOutput("editable_items_table"),
+            br(),
+            DT::dataTableOutput("editable_processing_charges_table"),
             br(),
             actionButton("add_row", "Add New Item"),
             br(),

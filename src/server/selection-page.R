@@ -90,20 +90,20 @@ generate_master_summary_df <- function(processed_data) {
     check.names = FALSE
   ))
 }
-
-generateInvoiceTable <- function(invoice_items_data) {
-  req(invoice_items_data)
-  
-  items <- invoice_items_data
-  
-  items$Quantity <- 1
-  
-  
-  items$Amount <- as.numeric(items$`Per Reaction Cost ($)`)
-  items$Total <- items$Quantity * items$Amount
-  
-  formatted <- items[, c("Item", "Description", "Quantity", "Amount", "Total")]
-  colnames(formatted) <- c("Item", "Description", "Quantity", "Amount", "Total")
-  
-  return(formatted)
-}
+# 
+# generateInvoiceTable <- function(invoice_items_data) {
+#   req(invoice_items_data)
+#   
+#   items <- invoice_items_data
+#   
+#   items$Quantity <- 1
+#   
+#   
+#   items$Amount <- as.numeric(items$`Per Reaction Cost ($)`)
+#   items$Total <- items$Quantity * items$Amount
+#   
+#   formatted <- items[, c("Item", "Description", "Quantity", "Amount", "Total")]
+#   colnames(formatted) <- c("Item", "Description", "Quantity", "Amount", "Total")
+#   
+#   return(formatted)
+# }

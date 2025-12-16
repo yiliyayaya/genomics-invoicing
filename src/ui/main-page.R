@@ -22,7 +22,7 @@ render_main_page <- function() {
         tableOutput("price_list_surcharges_table")
       ),
       mainPanel(
-        DT::dataTableOutput("price_list_main_table")
+        DT::dataTableOutput("price_list_table")
       )
     )
   )
