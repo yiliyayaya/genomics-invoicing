@@ -70,19 +70,34 @@ main_server_logic <- function(input, output, session, file_path,
   # Return to main page
   observeEvent(input$back_to_main, { current_page("main") })
   
+  observe({
+    if(current_page() == "invoice_generated") {
+      req(processed_data$price_list_surcharges(), processed_data$processing_surcharges())
+      
+      updateSelectizeInput(session, "project_type_select", 
+                           choices=unique(processed_data$price_list_surcharges()$`Surcharge Label`))
+      updateSelectizeInput(session, "processing_type_select", 
+                           choices=unique(processed_data$processing_surcharges()$`Surcharge Label`))
+    }
+  })
+  
+  items_table_data <- reactive({
+    req(input$project_type_select)
+    generate_items_summary_table(quote_data$selected_items, input$project_type_select)
+  })
+  
+  processing_table_data <- reactive({
+    req(input$processing_type_select)
+    generate_processing_summary_table(quote_data$selected_processing,
+                                      input$processing_type_select)
+  })
+
+  output$editable_items_table <- DT::renderDataTable({ items_table_data() })  
+  
+  output$editable_processing_charges_table <- DT::renderDataTable({ processing_table_data() })
+  
   # Generate invoice table after cleaning
   invoice_table <- reactive({
-    items_table <- generate_items_summary_table(quote_data$selected_items)
-    processing_charges_table <- generate_processing_summary_table(quote_data$selected_processing)
-    
-    output$editable_items_table <- DT::renderDataTable({ items_table })  
-    output$editable_processing_charges_table <- DT::renderDataTable({ processing_charges_table })
-    
-    updateSelectizeInput(session, "project_type_select", 
-                         choices=unique(processed_data$price_list_surcharges()$`Surcharge Label`))
-    updateSelectizeInput(session, "processing_type_select", 
-                         choices=unique(processed_data$processing_surcharges()$`Surcharge Label`))
-    
     output$download_invoice <- downloadHandler(
       filename = function() { paste0("Invoice_", Sys.Date(), ".pdf") },
       content = function(file) { generate_report(input, file, new_table) }

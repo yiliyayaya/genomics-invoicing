@@ -1,51 +1,51 @@
-generate_items_summary_table <- function(selected_items) {
+generate_items_summary_table <- function(selected_items, surcharge_selected) {
   items_df <- selected_items()
+  surcharge_label <- paste(surcharge_selected, "cost")
   # No null dataframes, at least 1 dataframe must be non-empty
   if (is.null(items_df) || nrow(items_df) == 0) {
     return(data.frame(Item=character(0), Description=character(0),
                       Quantity=numeric(0), Amount=numeric(0), Total=numeric(0)))
   }
-  
-  summary_table <- items_quote_format(items_df)
-  return(datatable(summary_table))
-}
-
-generate_processing_summary_table <- function(selected_processing_charges) {
-  processing_df <- selected_processing_charges()
-  if (is.null(processing_df)|| nrow(processing_df) == 0) {
-    return(data.frame(Item=character(0), Description=character(0),
-                      Quantity=numeric(0), Amount=numeric(0), Total=numeric(0)))
+  if (!surcharge_label %in% names(items_df)) {
+    cat("ERROR: Column not found!\n")
+    print(surcharge_label)
+    return(NULL)
   }
   
-  summary_table <- processing_quote_format(processing_df)
-  return(datatable(summary_table))
-}
-
-items_quote_format <- function(items_df) {
   formatted_items_df <- data.frame(
     Item = items_df$Item,
     Description = items_df$Description,
-    Quantity = 1,
-    Amount = items_df$`Per Reaction Cost ($)`,
-    stringsAsFactors = FALSE
+    Quantity = rep(1, nrow(items_df)),
+    Amount = items_df[[surcharge_label]]
   )
   
   formatted_items_df$Total <- formatted_items_df$Amount * formatted_items_df$Quantity
   
-  return(formatted_items_df)
+  return(datatable(formatted_items_df))
 }
 
-processing_quote_format <- function(processing_df) {
+generate_processing_summary_table <- function(selected_processing_charges, surcharge_selected) {
+  processing_df <- selected_processing_charges()
+  surcharge_label <- surcharge_selected
+  
+  if (is.null(processing_df)|| nrow(processing_df) == 0) {
+    return(data.frame(Item=character(0), Description=character(0),
+                      Quantity=numeric(0), Amount=numeric(0), Total=numeric(0)))
+  }
+  if (!surcharge_label %in% names(processing_df)) {
+    cat("ERROR: Column not found!\n")
+    print(surcharge_label)
+    return(NULL)
+  }
+  
   formatted_processing_df <- data.frame(
     Service = processing_df$Service,
     Description = processing_df$Description,
-    Quantity = 1,
-    Amount = processing_df$`Base Price`,
-    stringsAsFactors = FALSE
+    Quantity = rep(1, nrow(processing_df)),
+    Amount = processing_df[[surcharge_label]]
   )
   
   formatted_processing_df$Total <- formatted_processing_df$Amount * formatted_processing_df$Quantity
   
-  return(formatted_processing_df)
+  return(datatable(formatted_processing_df))
 }
-
